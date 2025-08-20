@@ -212,7 +212,7 @@ def parse_args():
 
     # ======== model =======
     parser.add_argument("--model_type",
-                        choices=["diffusion"],
+                        choices=["diffusion", "e3nn"],
                         type=str, default="diffusion")
     parser.add_argument("--ebd_type",
                         choices=["continuous", "discrete"],
