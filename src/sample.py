@@ -19,12 +19,13 @@ def sample(data_list, model, args, epoch=0):
     """
         Run reverse process
     """
-    visualize_first_n_samples = args.visualize_n_val_graphs
-    if visualize_first_n_samples is None:
-        visualize_first_n_samples = 0
+    visualize_n_samples = args.visualize_n_val_graphs
+    if visualize_n_samples is None:
+        visualize_n_samples = 0
     visualization_dir = args.visualization_path
     if not visualization_dir:
         visualization_dir = "./visualization"
+    visualize_from_end = args.visualize_from_end
     in_batch_size = args.batch_size
     # switch to eval mode
     model.eval()
@@ -36,9 +37,14 @@ def sample(data_list, model, args, epoch=0):
     timesteps = get_timesteps(args.num_steps)
 
     # Prepare for visualizations
-    visualize_first_n_samples = min(visualize_first_n_samples, len(data_list))
-    graph_gts = [data_list[i] for i in range(visualize_first_n_samples)]
-    visualization_values = [data_list.get_visualization_values(index=i) for i in range(visualize_first_n_samples)]
+    data_len: int = len(data_list)
+    visualize_n_samples = min(visualize_n_samples, len(data_list))
+    if visualize_from_end:
+        graph_gts = [data_list[-i - 1] for i in range(visualize_n_samples)]
+        viz_values = [data_list.get_visualization_values(index=data_len-i - 1) for i in range(visualize_n_samples)]
+    else:
+        graph_gts = [data_list[i] for i in range(visualize_n_samples)]
+        viz_values = [data_list.get_visualization_values(index=i) for i in range(visualize_n_samples)]
     four_letter_pdb_names = [get_four_letters_pdb_identifier(graph_gt.name) for graph_gt in graph_gts]
     visualization_dirs = create_visualization_directories(visualization_dir, epoch, four_letter_pdb_names)
 
@@ -46,12 +52,12 @@ def sample(data_list, model, args, epoch=0):
     data_list = randomize_position(data_list, args)
 
     # For visualization
-    for i in range(visualize_first_n_samples):
-        write_pdb(visualization_values[i], graph_gts[i], "receptor",
+    for i in range(visualize_n_samples):
+        write_pdb(viz_values[i], graph_gts[i], "receptor",
               f"{visualization_dirs[i]}/{four_letter_pdb_names[i]}-receptor.pdb")
-        write_pdb(visualization_values[i], graph_gts[i], "ligand",
+        write_pdb(viz_values[i], graph_gts[i], "ligand",
               f"{visualization_dirs[i]}/{four_letter_pdb_names[i]}-ligand-gt.pdb")
-        write_pdb(visualization_values[i], data_list[i], "ligand",
+        write_pdb(viz_values[i], data_list[i], "ligand",
               f"{visualization_dirs[i]}/{four_letter_pdb_names[i]}-ligand-0.pdb")
 
     # # determine batch_size
@@ -190,8 +196,8 @@ def sample(data_list, model, args, epoch=0):
             # === end of batch ===
             #printt(f'finished batch {com_idx}')
 
-        for i in range(visualize_first_n_samples):
-            write_pdb(visualization_values[i], new_data_list[i], "ligand",
+        for i in range(visualize_n_samples):
+            write_pdb(viz_values[i], new_data_list[i], "ligand",
                       f"{visualization_dirs[i]}/{four_letter_pdb_names[i]}-ligand-{t_idx + 1}.pdb")
 
         # update starting point for next step

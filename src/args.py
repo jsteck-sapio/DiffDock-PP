@@ -111,6 +111,10 @@ def parse_args():
     parser.add_argument("--visualize_n_val_graphs",
                         type=int, default=5,
                         help="How many of validation graphs should be visualized.")
+    parser.add_argument("--visualize_from_end",
+                        type=bool, default=False,
+                        help="Whether the visualize_n_val_graphs argument should visualize from the end instead of "
+                             "from the start.")
     parser.add_argument("--visualization_path",
                         type=str, default="./visualization",
                         help="Where to save visualizations.")
