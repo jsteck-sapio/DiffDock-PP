@@ -301,9 +301,8 @@ def main(args=None):
                 samples_list = sample(
                     loaders["val"], 
                     model, 
-                    args, 
-                    visualize_first_n_samples=args.visualize_n_val_graphs, 
-                    visualization_dir=args.visualization_path,)
+                    args
+                )
                 full_list.append(samples_list)
                 meter = evaluate_all_rmsds(loaders["val"], samples_list)
                 ligand_rmsd_summarized, complex_rmsd_summarized, interface_rmsd_summarized = meter.summarize(verbose=True)
@@ -334,7 +333,7 @@ def main(args=None):
         loaders,results = generate_loaders(loaders["test"],args) #TODO adapt sample size
         
         for i,loader in tqdm(enumerate(loaders), total=len(loaders)):
-            samples_list = sample(loader, model, args, visualize_first_n_samples=args.visualize_n_val_graphs) #TODO: should work on data loader
+            samples_list = sample(loader, model, args) #TODO: should work on data loader
             samples_loader = DataLoader(samples_list,batch_size=args.batch_size)
             pred_list = evaluate_confidence(model_confidence,samples_loader,args) # TODO -> maybe list inside
             results[i]= results[i]+sorted(list(zip(samples_list,pred_list)),key=lambda x:-x[1]) 

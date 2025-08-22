@@ -15,13 +15,17 @@ from scipy.spatial.transform import Rotation as R
 from utils import printt
 from geom_utils import set_time, NoiseTransform
 
-def sample(data_list, model, args, epoch=0, visualize_first_n_samples=0,
-           visualization_dir="./visualization", in_batch_size=None):
+def sample(data_list, model, args, epoch=0):
     """
         Run reverse process
     """
-    if in_batch_size is None:
-        in_batch_size = args.batch_size
+    visualize_first_n_samples = args.visualize_n_val_graphs
+    if visualize_first_n_samples is None:
+        visualize_first_n_samples = 0
+    visualization_dir = args.visualization_path
+    if not visualization_dir:
+        visualization_dir = "./visualization"
+    in_batch_size = args.batch_size
     # switch to eval mode
     model.eval()
 

@@ -167,9 +167,7 @@ def train(train_loader, val_loader, model,
             else:
                 data_list = loaders_for_reverse_diffusion["val"]
 
-            samples_val = sample(data_list, model, args, epoch=epoch,
-                                 visualize_first_n_samples=args.visualize_n_val_graphs,
-                                 visualization_dir=args.visualization_path)
+            samples_val = sample(data_list, model, args, epoch=epoch)
 
             meter = evaluate_all_rmsds(data_list, samples_val)
             ligand_rmsd_summarized, complex_rmsd_summarized, interface_rmsd_summarized = meter.summarize()
@@ -211,9 +209,7 @@ def train(train_loader, val_loader, model,
             else:
                 data_list = loaders_for_reverse_diffusion["train"]
 
-            samples_val = sample(data_list, model, args, epoch=epoch,
-                                 visualize_first_n_samples=args.visualize_n_val_graphs,
-                                 visualization_dir=args.visualization_path)
+            samples_val = sample(data_list, model, args, epoch=epoch)
 
             print(f'on {len(samples_val)} training samples:')
             meter = evaluate_all_rmsds(data_list, samples_val)
